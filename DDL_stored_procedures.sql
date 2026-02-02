@@ -49,8 +49,8 @@ CREATE PROCEDURE sp_vehicle_add(
     IN p_plate VARCHAR(20)
 )
 BEGIN
-    INSERT INTO vehicles (id_brand, id_model, Plate)
-    VALUES (p_id_brand, p_id_model, p_plate);
+    INSERT INTO vehicles (id_brand, id_model, Plate, is_active)
+    VALUES (p_id_brand, p_id_model, p_plate,1);
 
     SELECT 
         v.id, 
