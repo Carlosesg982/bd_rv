@@ -11,7 +11,7 @@ BEGIN
         m.title AS model_name, 
         v.created_at, 
         v.updated_at
-    FROM vehicles v
+    FROM Vehicles v
     INNER JOIN brand b ON v.id_brand = b.id
     INNER JOIN model m ON v.id_model = m.id
     WHERE is_active = 1
@@ -49,7 +49,7 @@ CREATE PROCEDURE sp_vehicle_add(
     IN p_plate VARCHAR(20)
 )
 BEGIN
-    INSERT INTO vehicles (id_brand, id_model, Plate, is_active)
+    INSERT INTO Vehicles (id_brand, id_model, Plate, is_active)
     VALUES (p_id_brand, p_id_model, p_plate,1);
 
     SELECT 
@@ -58,7 +58,7 @@ BEGIN
         b.title AS brand_name, 
         m.title AS model_name, 
         v.created_at
-    FROM vehicles v
+    FROM Vehicles v
     INNER JOIN brand b ON v.id_brand = b.id
     INNER JOIN model m ON v.id_model = m.id
     WHERE v.id = LAST_INSERT_ID();
@@ -71,11 +71,11 @@ CREATE PROCEDURE sp_vehicle_delete(
     IN p_id_vehicle INT
 )
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM vehicles WHERE id = p_id_vehicle) THEN
+    IF NOT EXISTS (SELECT 1 FROM Vehicles WHERE id = p_id_vehicle) THEN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'El vehículo no existe';
     ELSE
-        UPDATE vehicles 
+        UPDATE Vehicles 
         SET is_active = 0,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = p_id_vehicle;
@@ -94,10 +94,10 @@ CREATE PROCEDURE sp_vehicle_update(
     IN p_plate VARCHAR(20)
 )
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM vehicles WHERE id = p_id) THEN
+    IF NOT EXISTS (SELECT 1 FROM Vehicles WHERE id = p_id) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Vehículo no encontrado';
     ELSE
-        UPDATE vehicles 
+        UPDATE Vehicles 
         SET id_brand = p_id_brand, 
             id_model = p_id_model, 
             Plate = p_plate,
@@ -105,7 +105,7 @@ BEGIN
         WHERE id = p_id;
 
         SELECT v.id, v.Plate, b.title AS brand_name, m.title AS model_name, v.updated_at
-        FROM vehicles v
+        FROM Vehicles v
         INNER JOIN brand b ON v.id_brand = b.id
         INNER JOIN model m ON v.id_model = m.id
         WHERE v.id = p_id;
@@ -151,7 +151,7 @@ BEGIN
         rm.mileage,
         v.id AS vehicle_id
     FROM register_movement rm
-    INNER JOIN vehicles v ON rm.id_Vehicles = v.id
+    INNER JOIN Vehicles v ON rm.id_Vehicles = v.id
     INNER JOIN brand b ON v.id_brand = b.id
     INNER JOIN model m ON v.id_model = m.id
     WHERE (p_motorcyclist IS NULL OR p_motorcyclist = '' OR rm.motorcyclist LIKE CONCAT('%', p_motorcyclist, '%'))
